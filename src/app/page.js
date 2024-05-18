@@ -1,5 +1,7 @@
 'use client'
 
+import Vendor from '@/components/Vendor'
+
 import { useState, useEffect } from 'react'
 
 const Home = () => {
@@ -34,9 +36,13 @@ const Home = () => {
 
   function handlePurchase(buildingId) {
     const updatedBuildings = buildings.map((building) => {
-      if (building.id === buildingId && money >= building.cost) {
-        setMoney(money - building.cost)
-        return { ...building, number: building.number + 1 }
+      if (building.id === buildingId) {
+        if (money >= building.cost) {
+          setMoney(money - building.cost)
+          return { ...building, number: building.number + 1 }
+        } else {
+          console.log('Not enough money :(')
+        }
       }
       return building
     })
@@ -53,12 +59,9 @@ const Home = () => {
     return () => intervals.forEach((interval) => clearInterval(interval))
   }, [buildings])
 
-  useEffect(() => {
-    console.log(money)
-  }, [money])
-
-  const buttonClasses =
-    'border rounded-md bg-slate-300 text-slate-700 py-1 px-2'
+  // useEffect(() => {
+  //   console.log(money)
+  // }, [money])
 
   return (
     <div className="text-center">
@@ -67,22 +70,11 @@ const Home = () => {
       <hr />
       {buildings.map((building) => {
         return (
-          <div key={building.id}>
-            <button
-              onClick={() => handlePurchase(building.id)}
-              className={buttonClasses}
-            >
-              Buy {building.name} - Cost {building.cost}
-            </button>
-            <p>
-              {building.name}: {building.number}
-            </p>
-            <p>
-              Earn {building.income} dollars every {building.duration / 1000}{' '}
-              second{building.duration > 1000 ? 's' : ''} for each{' '}
-              {building.name} you own
-            </p>
-          </div>
+          <Vendor
+            key={building.id}
+            building={building}
+            handlePurchase={handlePurchase}
+          />
         )
       })}
     </div>

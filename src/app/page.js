@@ -5,50 +5,62 @@ import { useState, useEffect } from 'react'
 const Home = () => {
   const [money, setMoney] = useState(50)
 
-  const [simitci, setSimitci] = useState({
-    cost: 50,
-    number: 0,
-    income: 10,
-  })
-  const [tostcu, setTostcu] = useState({
-    cost: 150,
-    number: 0,
-    income: 30,
-  })
-  const [cafe, setCafe] = useState({
-    cost: 300,
-    number: 0,
-    income: 100,
-  })
+  const [buildings, setBuildings] = useState([
+    {
+      id: 0,
+      name: 'Simitçi',
+      cost: 50,
+      number: 0,
+      income: 10,
+      duration: 1000,
+    },
+    {
+      id: 1,
+      name: 'Tostçu',
+      cost: 150,
+      number: 0,
+      income: 30,
+      duration: 2000,
+    },
+    {
+      id: 2,
+      name: 'Cafe',
+      cost: 300,
+      number: 0,
+      income: 100,
+      duration: 3000,
+    },
+  ])
 
   function checkMoney(cost) {
-    if (money >= cost) return true
-    else return false
+    return money >= cost
+  }
+
+  function handlePurchase(buildingId) {
+    setBuildings((prevBuildings) =>
+      prevBuildings.map((building) => {
+        if (buildingId === building.id && checkMoney(building.cost)) {
+          setMoney((prevMoney) => prevMoney - building.cost)
+          return { ...building, number: building.number + 1 }
+        }
+        return building
+      })
+    )
   }
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setMoney((prevMoney) => prevMoney + simitci.number * simitci.income)
-    }, 1000)
+    const intervals = buildings.map((building) => {
+      return setInterval(() => {
+        setMoney((prevMoney) => prevMoney + building.number * building.income)
+      }, building.duration)
+    })
 
-    return () => clearInterval(interval)
-  }, [simitci.number])
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setMoney((prevMoney) => prevMoney + tostcu.number * tostcu.income)
-    }, 2000)
-
-    return () => clearInterval(interval)
-  }, [tostcu.number])
+    return () => intervals.forEach((interval) => clearInterval(interval))
+  }, [buildings])
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setMoney((prevMoney) => prevMoney + cafe.number * cafe.income)
-    }, 3000)
-
-    return () => clearInterval(interval)
-  }, [cafe.number])
+    console.log(money)
+  }, [money])
 
   const buttonClasses =
     'border rounded-md bg-slate-300 text-slate-700 py-1 px-2'
@@ -58,62 +70,26 @@ const Home = () => {
       <h1>Your money: {money}$</h1>
       <h2>Your buildings</h2>
       <hr />
-      <div>
-        <button
-          onClick={() => {
-            const isMoneyEnough = checkMoney(simitci.cost)
-            if (isMoneyEnough) {
-              setMoney((prevMoney) => prevMoney - simitci.cost)
-              setSimitci((p) => ({ ...p, number: p.number + 1 }))
-            } else {
-              console.log('Not enough money :(')
-            }
-          }}
-          className={buttonClasses}
-        >
-          Buy Simitçi - Cost 50$
-        </button>
-        <p>Simitci: {simitci.number}</p>
-        <p>Earn 10 dollars per second for each Simitci you own</p>
-      </div>
-      <hr />
-      <div>
-        <button
-          onClick={() => {
-            const isMoneyEnough = checkMoney(tostcu.cost)
-            if (isMoneyEnough) {
-              setMoney((prevMoney) => prevMoney - tostcu.cost)
-              setTostcu((p) => ({ ...p, number: p.number + 1 }))
-            } else {
-              console.log('Not enough money :(')
-            }
-          }}
-          className={buttonClasses}
-        >
-          Buy Tostçu - Cost 150$
-        </button>
-        <p>Tostçu: {tostcu.number}</p>
-        <p>Earn 30 dollars every 2 second for each Tostçu you own</p>
-      </div>
-      <hr />
-      <div>
-        <button
-          onClick={() => {
-            const isMoneyEnough = checkMoney(tostcu.cost)
-            if (isMoneyEnough) {
-              setMoney((prevMoney) => prevMoney - 300)
-              setCafe((p) => p + 1)
-            } else {
-              console.log('Not enough money :(')
-            }
-          }}
-          className={buttonClasses}
-        >
-          Buy Cafe - Cost 300$
-        </button>
-        <p>Cafe: {cafe.number}</p>
-        <p>Earn 100 dollars every 3 second for each Cafe you own</p>
-      </div>
+      {buildings.map((building) => {
+        return (
+          <div key={building.id}>
+            <button
+              onClick={() => handlePurchase(building.id)}
+              className={buttonClasses}
+            >
+              Buy {building.name} - Cost {building.cost}
+            </button>
+            <p>
+              {building.name}: {building.number}
+            </p>
+            <p>
+              Earn {building.income} dollars every {building.duration / 1000}{' '}
+              second{building.duration > 1000 ? 's' : ''} for each{' '}
+              {building.name} you own
+            </p>
+          </div>
+        )
+      })}
     </div>
   )
 }

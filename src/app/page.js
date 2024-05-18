@@ -32,20 +32,15 @@ const Home = () => {
     },
   ])
 
-  function checkMoney(cost) {
-    return money >= cost
-  }
-
   function handlePurchase(buildingId) {
-    setBuildings((prevBuildings) =>
-      prevBuildings.map((building) => {
-        if (buildingId === building.id && checkMoney(building.cost)) {
-          setMoney((prevMoney) => prevMoney - building.cost)
-          return { ...building, number: building.number + 1 }
-        }
-        return building
-      })
-    )
+    const updatedBuildings = buildings.map((building) => {
+      if (building.id === buildingId && money >= building.cost) {
+        setMoney(money - building.cost)
+        return { ...building, number: building.number + 1 }
+      }
+      return building
+    })
+    setBuildings(updatedBuildings)
   }
 
   useEffect(() => {

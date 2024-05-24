@@ -3,6 +3,7 @@
 import Vendor from '@/components/Vendor'
 import Cookies from 'js-cookie'
 
+import { animated, useTransition } from '@react-spring/web'
 import { useState, useEffect } from 'react'
 
 const Home = () => {
@@ -55,6 +56,7 @@ const Home = () => {
 
   const [money, setMoney] = useState(savedMoney || startingMoney)
   const [isClient, setIsClient] = useState(false)
+  const [isPlayerPoor, setIsPlayerPoor] = useState(false)
 
   const [buildings, setBuildings] = useState(
     savedBuildings ? JSON.parse(savedBuildings) : startingState
@@ -123,6 +125,16 @@ const Home = () => {
     setIsClient(true)
   }, [])
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isPlayerPoor) {
+        setIsPlayerPoor(false)
+      }
+    }, 5000)
+
+    return () => clearTimeout(timeout)
+  }, [isPlayerPoor])
+
   function handlePurchase(buildingId) {
     const updatedBuildings = buildings.map((building) => {
       if (building.id === buildingId) {
@@ -131,6 +143,7 @@ const Home = () => {
           return { ...building, number: building.number + 1 }
         } else {
           console.log('Not enough money :(')
+          setIsPlayerPoor(true)
         }
       }
       return building
@@ -152,6 +165,12 @@ const Home = () => {
     currency: 'USD',
   }).format(money)
 
+  const transitions = useTransition(isPlayerPoor, {
+    from: { opacity: 0, transform: 'translateY(20px)' },
+    enter: { opacity: 1, transform: 'translateY(0)' },
+    leave: { opacity: 0, transform: 'translateY(20px)' },
+  })
+
   return (
     <div>
       {isClient ? (
@@ -171,10 +190,20 @@ const Home = () => {
                   key={building.id}
                   building={building}
                   handlePurchase={handlePurchase}
-                  money={money}
                 />
               )
             })}
+          {transitions(
+            (styles, item) =>
+              item && (
+                <animated.div
+                  style={styles}
+                  className="bg-black/50 text-white w-fit px-5 py-6 rounded-lg absolute right-3 bottom-3"
+                >
+                  Not enough money :(
+                </animated.div>
+              )
+          )}
         </div>
       ) : (
         <h1>Loading...</h1>

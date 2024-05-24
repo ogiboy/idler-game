@@ -2,7 +2,7 @@ import { animated, useSpring } from '@react-spring/web'
 
 import { useEffect } from 'react'
 
-const Vendor = ({ building, handlePurchase, money }) => {
+const Vendor = ({ building, handlePurchase }) => {
   const [spring, api] = useSpring(() => ({
     width: '10px',
     height: '25px',
@@ -21,7 +21,6 @@ const Vendor = ({ building, handlePurchase, money }) => {
       <button
         onClick={() => handlePurchase(building.id)}
         className="border rounded-md bg-slate-300 hover:text-slate-100 hover:bg-slate-400 text-slate-700 py-1 px-2 disabled:bg-slate-200 disabled:text-slate-700"
-        disabled={money < building.cost}
       >
         Buy {building.name} - Cost {building.cost}
       </button>

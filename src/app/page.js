@@ -9,35 +9,39 @@ const Home = () => {
   const savedMoney = Cookies.get('money')
   const savedBuildings = Cookies.get('buildings')
 
-  const [money, setMoney] = useState(savedMoney || 50)
+  const startingMoney = 50
+  const startingState = [
+    {
+      id: 0,
+      name: 'Simitçi',
+      cost: 50,
+      number: 0,
+      income: 10,
+      duration: 1000,
+    },
+    {
+      id: 1,
+      name: 'Tostçu',
+      cost: 150,
+      number: 0,
+      income: 30,
+      duration: 2000,
+    },
+    {
+      id: 2,
+      name: 'Cafe',
+      cost: 300,
+      number: 0,
+      income: 100,
+      duration: 3000,
+    },
+  ]
+
+  const [money, setMoney] = useState(savedMoney || startingMoney)
+  const [isClient, setIsClient] = useState(false)
 
   const [buildings, setBuildings] = useState(
-    JSON.parse(savedBuildings) || [
-      {
-        id: 0,
-        name: 'Simitçi',
-        cost: 50,
-        number: 0,
-        income: 10,
-        duration: 1000,
-      },
-      {
-        id: 1,
-        name: 'Tostçu',
-        cost: 150,
-        number: 0,
-        income: 30,
-        duration: 2000,
-      },
-      {
-        id: 2,
-        name: 'Cafe',
-        cost: 300,
-        number: 0,
-        income: 100,
-        duration: 3000,
-      },
-    ]
+    savedBuildings ? JSON.parse(savedBuildings) : startingState
   )
 
   useEffect(() => {
@@ -99,6 +103,10 @@ const Home = () => {
     loadData()
   }, [])
 
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   function handlePurchase(buildingId) {
     const updatedBuildings = buildings.map((building) => {
       if (building.id === buildingId) {
@@ -115,31 +123,40 @@ const Home = () => {
   }
 
   function resetCookies() {
+    setBuildings(startingState)
+    setMoney(startingMoney)
+
     Cookies.remove('money')
     Cookies.remove('buildings')
     console.log('Cookies removed')
   }
 
   return (
-    <div className="text-center">
-      <div>
-        <h1>Your money: {money}$</h1>
-        <button onClick={() => resetCookies()} className="bg-slate-200">
-          Reset Cookies
-        </button>
-      </div>
-      <hr />
-      <h2>Your buildings</h2>
-      {buildings &&
-        buildings.map((building) => {
-          return (
-            <Vendor
-              key={building.id}
-              building={building}
-              handlePurchase={handlePurchase}
-            />
-          )
-        })}
+    <div>
+      {isClient ? (
+        <div className="text-center">
+          <div>
+            <h1>Your money: {money}$</h1>
+            <button onClick={() => resetCookies()} className="bg-slate-200">
+              Reset Progress
+            </button>
+          </div>
+          <hr />
+          <h2>Your buildings</h2>
+          {buildings &&
+            buildings.map((building) => {
+              return (
+                <Vendor
+                  key={building.id}
+                  building={building}
+                  handlePurchase={handlePurchase}
+                />
+              )
+            })}
+        </div>
+      ) : (
+        <h1>Loading...</h1>
+      )}
     </div>
   )
 }

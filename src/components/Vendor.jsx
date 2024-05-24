@@ -17,7 +17,7 @@ const Vendor = ({ building, handlePurchase }) => {
   }, [building.number, api])
 
   return (
-    <div className="border-2 flex flex-col items-center justify-between min-h-24">
+    <div className="border-2 flex flex-col items-center justify-evenly min-h-32 mx-2 my-5">
       <button
         onClick={() => handlePurchase(building.id)}
         className="border rounded-md bg-slate-300 hover:text-slate-100 hover:bg-slate-400 text-slate-700 py-1 px-2 disabled:bg-slate-200 disabled:text-slate-700"

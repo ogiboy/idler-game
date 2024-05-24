@@ -81,7 +81,7 @@ const Home = () => {
           }),
         ])
 
-        console.log('saved data: ' + money + buildings)
+        // console.log('saved data: ' + money + buildings)
       } catch (error) {
         console.error('Error saving data to cookies:', error)
       }
@@ -171,6 +171,7 @@ const Home = () => {
                   key={building.id}
                   building={building}
                   handlePurchase={handlePurchase}
+                  money={money}
                 />
               )
             })}

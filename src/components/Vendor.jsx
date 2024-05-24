@@ -1,12 +1,9 @@
 const Vendor = ({ building, handlePurchase }) => {
-  const buttonClasses =
-    'border rounded-md bg-slate-300 text-slate-700 py-1 px-2'
-
   return (
     <div>
       <button
         onClick={() => handlePurchase(building.id)}
-        className={buttonClasses}
+        className="border rounded-md bg-slate-300 text-slate-700 py-1 px-2"
       >
         Buy {building.name} - Cost {building.cost}
       </button>

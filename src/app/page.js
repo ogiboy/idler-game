@@ -147,12 +147,17 @@ const Home = () => {
     console.log('Cookies removed')
   }
 
+  const formattedMoney = new Intl.NumberFormat('en-Us', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(money)
+
   return (
     <div>
       {isClient ? (
         <div className="text-center">
           <div>
-            <h1>Your money: {money}$</h1>
+            <h1>Your money: {formattedMoney}</h1>
             <button onClick={() => resetCookies()} className="bg-slate-200">
               Reset Progress
             </button>

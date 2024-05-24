@@ -29,11 +29,27 @@ const Home = () => {
     },
     {
       id: 2,
-      name: 'Cafe',
+      name: 'Midyeci',
       cost: 300,
       number: 0,
       income: 100,
       duration: 3000,
+    },
+    {
+      id: 3,
+      name: 'Kokoreççi',
+      cost: 500,
+      number: 0,
+      income: 200,
+      duration: 5000,
+    },
+    {
+      id: 4,
+      name: 'Cafe',
+      cost: 1500,
+      number: 0,
+      income: 500,
+      duration: 15000,
     },
   ]
 

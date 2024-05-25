@@ -180,16 +180,18 @@ const Home = () => {
       {isClient ? (
         <div className="text-center">
           <div className="relative p-5">
-            <h1 className="text-5xl">{formattedMoney}</h1>
+            <h1 className="text-5xl text-blue-900">{formattedMoney}</h1>
             <button
               onClick={() => handleReset()}
-              className="absolute top-8 left-3 bg-gradient-to-tr hover:bg-gradient-to-bl from-red-500 to-yellow-500 rounded-sm px-2 hover:ring-1"
+              className="absolute top-8 left-3 bg-gradient-to-tr hover:bg-gradient-to-bl from-red-500 to-yellow-500 rounded-sm px-2 hover:ring-1 text-amber-200 hover:text-amber-800"
             >
               Reset Progress
             </button>
           </div>
           <hr />
-          <h2 className="underline tracking-wider text-lg">Your buildings</h2>
+          <h2 className="underline tracking-wider text-lg text-blue-900">
+            Your buildings
+          </h2>
           {buildings &&
             buildings.map((building) => {
               return (
@@ -205,7 +207,7 @@ const Home = () => {
               item && (
                 <animated.div
                   style={styles}
-                  className="bg-black/50 text-white w-fit px-5 py-6 rounded-lg absolute right-3 bottom-3"
+                  className="bg-black/50 text-white w-fit px-5 py-6 rounded-lg fixed right-3 bottom-6"
                 >
                   Not enough money :(
                 </animated.div>

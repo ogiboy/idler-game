@@ -130,7 +130,7 @@ const Home = () => {
       if (isPlayerPoor) {
         setIsPlayerPoor(false)
       }
-    }, 5000)
+    }, 3000)
 
     return () => clearTimeout(timeout)
   }, [isPlayerPoor])
@@ -151,13 +151,17 @@ const Home = () => {
     setBuildings(updatedBuildings)
   }
 
-  function resetCookies() {
-    setBuildings(startingState)
-    setMoney(startingMoney)
+  function handleReset() {
+    const confirm = window.confirm('Are you sure?')
 
-    Cookies.remove('money')
-    Cookies.remove('buildings')
-    console.log('Cookies removed')
+    if (confirm) {
+      setBuildings(startingState)
+      setMoney(startingMoney)
+
+      Cookies.remove('money')
+      Cookies.remove('buildings')
+      // console.log('Cookies removed')
+    }
   }
 
   const formattedMoney = new Intl.NumberFormat('en-Us', {
@@ -172,17 +176,20 @@ const Home = () => {
   })
 
   return (
-    <div>
+    <div className="cursor-default bg-blue-300/50">
       {isClient ? (
         <div className="text-center">
-          <div>
-            <h1>Your money: {formattedMoney}</h1>
-            <button onClick={() => resetCookies()} className="bg-slate-200">
+          <div className="relative p-5">
+            <h1 className="text-5xl">{formattedMoney}</h1>
+            <button
+              onClick={() => handleReset()}
+              className="absolute top-8 left-3 bg-gradient-to-tr hover:bg-gradient-to-bl from-red-500 to-yellow-500 rounded-sm px-2 hover:ring-1"
+            >
               Reset Progress
             </button>
           </div>
           <hr />
-          <h2>Your buildings</h2>
+          <h2 className="underline tracking-wider text-lg">Your buildings</h2>
           {buildings &&
             buildings.map((building) => {
               return (

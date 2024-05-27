@@ -2,10 +2,10 @@
 
 import Vendor from '@/components/Vendor'
 import Header from './Header'
+import Footer from './Footer'
+import Loading from './Loading'
+import PoorPlayer from './PoorPlayer'
 
-import Cookies from 'js-cookie'
-
-import { animated, useTransition } from '@react-spring/web'
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -14,12 +14,18 @@ import {
   setIsPlayerPoor,
   incrementMoney,
   resetGame,
+  loadData,
+  saveData,
+  setIsSaved,
 } from '@/features/game/gameSlice'
+import Saving from './Saving'
 
 const Game = () => {
   const [isClient, setIsClient] = useState(false)
 
-  const { money, buildings, isPlayerPoor } = useSelector((store) => store.game)
+  const { money, buildings, isPlayerPoor, isSaved } = useSelector(
+    (store) => store.game
+  )
 
   const dispatch = useDispatch()
 
@@ -34,53 +40,19 @@ const Game = () => {
   }, [buildings])
 
   useEffect(() => {
-    const saveData = async () => {
-      try {
-        await Promise.all([
-          Cookies.set('money', money, { expires: 2, sameSite: 'Strict' }),
-          Cookies.set('buildings', JSON.stringify(buildings), {
-            expires: 2,
-            sameSite: 'Strict',
-          }),
-        ])
+    const saveInterval = setInterval(() => {
+      dispatch(saveData())
+    }, 15000)
 
-        // console.log('saved data: ' + money + buildings)
-      } catch (error) {
-        console.error('Error saving data to cookies:', error)
-      }
+    return () => {
+      clearInterval(saveInterval)
+      console.log('save interval cleared')
     }
-
-    saveData()
-
-    const saveInterval = setInterval(saveData, 10000)
-
-    return () => clearInterval(saveInterval)
-  }, [money, buildings])
+  }, [dispatch])
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const savedMoney = Cookies.get('money')
-        const savedBuildings = Cookies.get('buildings')
-
-        if (savedMoney) {
-          dispatch(setMoney(Number(savedMoney)))
-        } else {
-          throw new Error('Error fetching money')
-        }
-
-        if (savedBuildings) {
-          dispatch(setBuildings(JSON.parse(savedBuildings)))
-        } else {
-          throw new Error('Error fetching buildings')
-        }
-      } catch (error) {
-        console.log('Error loading save: ', error)
-      }
-    }
-
-    loadData()
-  }, [])
+    dispatch(loadData())
+  }, [dispatch])
 
   useEffect(() => {
     setIsClient(true)
@@ -94,14 +66,25 @@ const Game = () => {
     }, 3000)
 
     return () => clearTimeout(timeout)
-  }, [isPlayerPoor])
+  }, [isPlayerPoor, dispatch])
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isSaved) {
+        dispatch(setIsSaved(false))
+      }
+    }, 3000)
+
+    return () => clearTimeout(timeout)
+  }, [isSaved, dispatch])
 
   function handlePurchase(buildingId) {
     const updatedBuildings = buildings.map((building) => {
       if (building.id === buildingId) {
         if (money >= building.cost) {
+          const updatedBuilding = { ...building, number: building.number + 1 }
           dispatch(setMoney(money - building.cost))
-          return { ...building, number: building.number + 1 }
+          return updatedBuilding
         } else {
           console.log('Not enough money :(')
           dispatch(setIsPlayerPoor(true))
@@ -110,6 +93,9 @@ const Game = () => {
       return building
     })
     dispatch(setBuildings(updatedBuildings))
+    // dispatch(saveData())
+    console.log('Buildings updated:', updatedBuildings)
+    console.log('Money after purchase:', money)
   }
 
   function handleReset() {
@@ -125,12 +111,6 @@ const Game = () => {
     style: 'currency',
     currency: 'USD',
   }).format(money)
-
-  const transitions = useTransition(isPlayerPoor, {
-    from: { opacity: 0, transform: 'translateY(20px)' },
-    enter: { opacity: 1, transform: 'translateY(0)' },
-    leave: { opacity: 0, transform: 'translateY(20px)' },
-  })
 
   return (
     <div className="cursor-default bg-blue-300/50 h-screen w-screen select-none">
@@ -151,23 +131,12 @@ const Game = () => {
                 />
               )
             })}
-          {transitions(
-            (styles, item) =>
-              item && (
-                <animated.div
-                  style={styles}
-                  className="bg-black/50 text-white w-fit px-5 py-6 rounded-lg fixed right-3 bottom-6"
-                >
-                  Not enough money :(
-                </animated.div>
-              )
-          )}
-          <p className="fixed bottom-0 w-screen text-center bg-blue-300/50">
-            This game uses an autosave feature 💾
-          </p>
+          {isSaved && <Saving />}
+          <PoorPlayer />
+          <Footer />
         </div>
       ) : (
-        <h1>Loading...</h1>
+        <Loading />
       )}
     </div>
   )

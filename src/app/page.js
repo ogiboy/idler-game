@@ -176,14 +176,16 @@ const Home = () => {
   })
 
   return (
-    <div className="cursor-default bg-blue-300/50">
+    <div className="cursor-default bg-blue-300/50 h-screen w-screen">
       {isClient ? (
-        <div className="text-center">
-          <div className="relative p-5">
-            <h1 className="text-5xl text-blue-900">{formattedMoney}</h1>
+        <div className="text-center w-full">
+          <div className="p-5 w-full h-full flex flex-col items-center justify-between">
+            <h1 className="text-blue-900 text-nowrap text-3xl md:text-4xl lg:text-5xl">
+              {formattedMoney}
+            </h1>
             <button
               onClick={() => handleReset()}
-              className="absolute top-8 left-3 bg-gradient-to-tr hover:bg-gradient-to-bl from-red-500 to-yellow-500 rounded-sm px-2 hover:ring-1 text-amber-200 hover:text-amber-800"
+              className="bg-gradient-to-tr hover:bg-gradient-to-bl from-red-500 to-yellow-500 rounded-sm px-2 mt-3 hover:ring-1 text-amber-200 hover:text-amber-800 scale-75"
             >
               Reset Progress
             </button>

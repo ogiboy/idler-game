@@ -5,6 +5,7 @@ import Header from './Header'
 import Footer from './Footer'
 import Loading from './Loading'
 import PoorPlayer from './PoorPlayer'
+import Saving from './Saving'
 
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -18,7 +19,6 @@ import {
   saveData,
   setIsSaved,
 } from '@/features/game/gameSlice'
-import Saving from './Saving'
 
 const Game = () => {
   const [isClient, setIsClient] = useState(false)
@@ -113,24 +113,26 @@ const Game = () => {
   }).format(money)
 
   return (
-    <div className="cursor-default bg-blue-300/50 h-screen w-screen select-none">
+    <div className="cursor-default bg-blue-300/50 h-full w-screen select-none">
       {isClient ? (
-        <div className="text-center w-full">
+        <div className="text-center w-full h-full">
           <Header formattedMoney={formattedMoney} handleReset={handleReset} />
           <hr />
           <h2 className="underline tracking-wider text-lg text-blue-900">
             Your buildings
           </h2>
-          {buildings &&
-            buildings.map((building) => {
-              return (
-                <Vendor
-                  key={building.id}
-                  building={building}
-                  handlePurchase={handlePurchase}
-                />
-              )
-            })}
+          <div className="h-full m-10">
+            {buildings &&
+              buildings.map((building) => {
+                return (
+                  <Vendor
+                    key={building.name}
+                    building={building}
+                    handlePurchase={handlePurchase}
+                  />
+                )
+              })}
+          </div>
           {isSaved && <Saving />}
           <PoorPlayer />
           <Footer />

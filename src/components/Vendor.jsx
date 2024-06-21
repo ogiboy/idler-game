@@ -16,8 +16,13 @@ const Vendor = ({ building, handlePurchase }) => {
     return () => api.stop()
   }, [building.number, api])
 
+  const formattedMoney = new Intl.NumberFormat('en-Us', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(building.cost)
+
   return (
-    <div className="border-2 rounded-md flex flex-col items-center justify-evenly min-h-32 mx-2 my-5 bg-gradient-to-r from-cyan-500 to-blue-500">
+    <div className="border-2 rounded-md rounded-tl-3xl rounded-br-3xl flex flex-col items-center justify-evenly min-h-32 mx-2 my-5 bg-gradient-to-r from-cyan-500 to-blue-500">
       <div className="w-5/6 border-2 rounded-md my-2">
         <animated.div
           className="text-slate-200 bg-gradient-to-r from-blue-500 to-blue-300"
@@ -28,9 +33,11 @@ const Vendor = ({ building, handlePurchase }) => {
       </div>
       <button
         onClick={() => handlePurchase(building.id)}
-        className="bg-gradient-to-l hover:bg-gradient-to-r from-cyan-500 to-blue-500 border rounded-md text-slate-200 py-1 px-2 animate-pulse hover:animate-none"
+        className="bg-gradient-to-l hover:bg-gradient-to-r from-cyan-500 to-blue-500 border rounded-md text-slate-200 py-1 px-2 animate-pulse hover:animate-none w-4/6 flex justify-evenly items-center"
       >
-        Buy {building.name} - Cost {building.cost}
+        <span>Buy {building.name}</span>
+        <span>-</span>
+        <span>{formattedMoney}</span>
       </button>
       <p className="text-slate-200">
         Earn {building.income} dollars every {building.duration / 1000} second

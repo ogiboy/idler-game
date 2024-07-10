@@ -102,9 +102,7 @@ const savedBuildings = Cookies.get('buildings')
 
 const initialState = {
   money: savedMoney ? savedMoney : startingMoney,
-  buildings: savedBuildings
-    ? JSON.parse(savedBuildings).sort((a, b) => a.cost - b.cost)
-    : startingState.sort((a, b) => a.cost - b.cost),
+  buildings: savedBuildings ? JSON.parse(savedBuildings) : startingState,
   isPlayerPoor: false,
   isLoaded: false,
   isSaved: false,

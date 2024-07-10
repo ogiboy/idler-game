@@ -32,7 +32,10 @@ const Vendor = ({ building, handlePurchase }) => {
         </animated.div>
       </div>
       <button
-        onClick={() => handlePurchase(building.id)}
+        onClick={(e) => {
+          e.stopPropagation()
+          handlePurchase(building.id)
+        }}
         className="bg-gradient-to-l hover:bg-gradient-to-r from-cyan-500 to-blue-500 border rounded-md text-slate-200 py-1 px-2 animate-pulse hover:animate-none w-4/6 flex justify-evenly items-center"
       >
         <span>Buy {building.name}</span>

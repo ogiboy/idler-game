@@ -7,7 +7,7 @@ import Loading from './Loading'
 import PoorPlayer from './PoorPlayer'
 import Saving from './Saving'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   setMoney,
@@ -19,6 +19,16 @@ import {
   saveData,
   setIsSaved,
 } from '@/features/game/gameSlice'
+
+const debounce = (func, delay) => {
+  let timeoutId
+  return (...args) => {
+    if (timeoutId) clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => {
+      func(...args)
+    }, delay)
+  }
+}
 
 const Game = () => {
   const [isClient, setIsClient] = useState(false)
@@ -78,25 +88,28 @@ const Game = () => {
     return () => clearTimeout(timeout)
   }, [isSaved, dispatch])
 
-  function handlePurchase(buildingId) {
-    const updatedBuildings = buildings.map((building) => {
-      if (building.id === buildingId) {
-        if (money >= building.cost) {
-          const updatedBuilding = { ...building, number: building.number + 1 }
-          dispatch(setMoney(money - building.cost))
-          return updatedBuilding
-        } else {
-          console.log('Not enough money :(')
-          dispatch(setIsPlayerPoor(true))
+  const handlePurchase = useCallback(
+    debounce((buildingId) => {
+      const updatedBuildings = buildings.map((building) => {
+        if (building.id === buildingId) {
+          if (money >= building.cost) {
+            const updatedBuilding = { ...building, number: building.number + 1 }
+            dispatch(setMoney(money - building.cost))
+            return updatedBuilding
+          } else {
+            console.log('Not enough money :(')
+            dispatch(setIsPlayerPoor(true))
+          }
         }
-      }
-      return building
-    })
-    dispatch(setBuildings(updatedBuildings))
-    // dispatch(saveData())
-    console.log('Buildings updated:', updatedBuildings)
-    console.log('Money after purchase:', money)
-  }
+        return building
+      })
+      dispatch(setBuildings(updatedBuildings))
+      // dispatch(saveData())
+      console.log('Buildings updated:', updatedBuildings)
+      console.log('Money after purchase:', money)
+    }, 1300),
+    [money, buildings, dispatch]
+  )
 
   function handleReset() {
     const confirm = window.confirm('Are you sure?')
